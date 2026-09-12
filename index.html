@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="description" content="ROBOT PROGRAMMER MANAGER V6 — shared online robot database">
+<title>ROBOT PROGRAMMER MANAGER V6 — ONLINE</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="auth" class="hidden"></div>
+<div class="app-shell hidden" id="appShell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-mark">RP</div><div><b>ROBOT PROGRAMMER</b><small>MANAGER V6</small></div></div>
+    <nav id="nav">
+      <button class="nav-item active" data-page="dashboard">⌂ <span>Dashboard</span></button>
+      <button class="nav-item" data-page="robots">🤖 <span>Robots</span></button>
+      <button class="nav-item" data-page="calibration">🎯 <span>Calibration</span></button>
+      <button class="nav-item" data-page="io">🔌 <span>I/O Configuration</span></button>
+      <button class="nav-item" data-page="ethernet">🌐 <span>Ethernet</span></button>
+      <button class="nav-item" data-page="overhang">📐 <span>Overhang Generator</span></button>
+      <button class="nav-item" data-page="panel">▦ <span>Panel Diagram</span></button>
+      <button class="nav-item" data-page="details">📝 <span>Other Details</span></button>
+      <button class="nav-item" data-page="backup">☁ <span>Cloud / Backup</span></button>
+    </nav>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn">☰</button>
+      <div class="top-title"><h1 id="pageTitle">Dashboard</h1><div id="currentRobotLabel">No robot selected</div></div>
+      <div class="top-actions"><span id="onlineBadge" class="badge">LOCAL</span><button class="btn secondary" id="quickSave">SAVE</button><button class="btn primary" id="addRobotTop">+ ROBOT</button></div>
+    </header>
+    <section class="content"><div id="app"></div></section>
+  </main>
+</div>
+<div class="modal hidden" id="modal"><div class="modal-card"><div class="modal-head"><h2 id="modalTitle">Add</h2><button id="modalClose">×</button></div><div id="modalBody"></div></div></div>
+<script src="supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="oh.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "ROBOT PROGRAMMER MANAGER V6 — ONLINE",
+  "short_name": "Robot Manager V6",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#111827",
+  "description": "Shared online robot programmer database",
+  "icons": []
+}
