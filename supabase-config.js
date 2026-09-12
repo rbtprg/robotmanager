@@ -9,6 +9,6 @@
     using the SQL supplied in supabase_schema.sql.
 */
 window.SUPABASE_CONFIG = {
-  url: 'https://hkvlmjiecfkycnbjrbsb.supabase.co',
-  publishableKey: 'sb_publishable_tu9SRXUiZ0hB3zHaIVGLuw_DIQZnOZx'
+  url: 'https://ikedtwgtxqsdkodzxnft.supabase.co',
+  publishableKey: 'sb_publishable_qJTVa0_vBqDAbcGfvRmwbg_ANGdlOeU'
 };
