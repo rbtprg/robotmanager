@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+
+
+  <script src="oh.js"></script>
+  <title>Overhang</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #01040a, #1f2937);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+/* TITLE */
+
+.titlee {
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+#vb {
+    font-size: 42px;
+    color: #ffcc00;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px #ffcc00;
+}
+
+#vbb {
+    font-size: 28px;
+    margin-bottom: 40px;
+    color: #ffffff;
+}
+
+
+#x,#y,#z,#o,#ox,#oy,#oz{
+    text-align: center;
+    font-weight: 700;
+}
+
+/* MAIN BOX */
+
+.ipbox,
+.opbox {
+    width: 380px;
+    background: rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* INPUTS */
+
+.ipbox input,
+.opbox input {
+    width: 100%;
+    height: 50px;
+    margin-bottom: 18px;
+    border: none;
+    outline: none;
+    border-radius: 12px;
+    padding-left: 15px;
+    font-size: 17px;
+    background: #f3f4f6;
+    transition: 0.3s;
+}
+
+.ipbox input:focus,
+.opbox input:focus {
+    border: 2px solid #ffcc00;
+    box-shadow: 0 0 12px #ffcc00;
+}
+
+/* BUTTON SECTION */
+
+.sc {
+    margin-bottom: 25px;
+}
+
+/* BUTTONS */
+
+#ssb,
+#sb {
+    width: 200px;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    background: #ffcc00;
+    color: #111827;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    /* box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4); */
+}
+
+#sb{
+    margin-left: 50px;
+}
+
+#ssb:hover,
+#sb:hover {
+    background: #ffd633;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 204, 0, 0.6);
+}
+
+#ssb:active,
+#sb:active {
+    transform: scale(0.97);
+}
+
+/* OUTPUT BOX TITLE LOOK */
+
+.opbox {
+    /* border-left: 5px solid #ffcc00; */
+}
+
+/* MOBILE RESPONSIVE */
+
+@media (max-width: 450px) {
+
+    .ipbox,
+    .opbox {
+        width: 90%;
+        padding: 20px;
+    }
+
+    #vb {
+        font-size: 32px;
+    }
+
+    #vbb {
+        font-size: 22px;
+    }
+
+    #ssb,
+    #sb {
+        width: 170px;
+    }
+}
+
+
+
+
+
+</style>
+
+
+
+<script>
+
+function toggleMenu() {
+
+    let menu = document.getElementById("sideMenu");
+
+    if (menu.style.left === "0px") {
+        menu.style.left = "-250px";
+    } 
+    
+    else {
+        menu.style.left = "0px";
+    }
+
+}
+
+</script>
+
+</head>
+
+<body>
+
+<!-- 
+    <div class="menu-icon" onclick="toggleMenu()">
+    ☰
+</div> -->
+
+<!-- SIDE MENU -->
+<div class="side-menu" id="sideMenu">
+<br>
+<br>
+    <a href="index.html">HOME</a>
+
+    <a href="og.html">OVERHANG</a>
+
+      <a href="diagram.html">DIAGRAM</a>
+
+</div>
+
+  <div class="titlee" id="vb">OLD FANUC</div>
+  <div class="titlee" id="vbb">OVERHANG GENRATOR</div>
+
+  <div class="ipbox">
+
+    <input id="x" type="any" placeholder="ENTER X">
+    <input id="y" type="any" placeholder="ENTER Y">
+    <input id="z" type="any" placeholder="ENTER Z">
+    <input id="o" type="any" placeholder="ENTER OH">
+
+  </div>
+
+  <div class="sc">
+    <button id="ssb" onclick="run()">SUBMIT</button>
+
+  </div>
+   
+
+  
+
+  <div class="opbox">
+
+    <input id="ox" type="any" placeholder="VALUE X">
+    <input id="oy" type="any" placeholder="VALUE Y">
+    <input id="oz" type="any" placeholder="VALUE Z">
+
+  </div>
+
+
+  <script src="oh.js"></script>
+</body>
+
+</html>
