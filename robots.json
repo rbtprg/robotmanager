@@ -1,14 +1,279 @@
 {
   "robots": [
     {
-      "id": "adfceb8e-a877-43f1-966d-d1db66c62984",
-      "calibration": {},
+      "id": "c31b7f16-7745-4ce5-a181-48c32219ca03",
+      "calibration": {
+        "masterCounts": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
       "io": {
-        "digitalIn": [],
-        "digitalOut": [],
+        "digitalIn": [
+          {
+            "range": "89-20",
+            "rack": "89",
+            "slot": "120",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          }
+        ],
+        "digitalOut": [
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "89",
+            "rack": "5",
+            "slot": "5",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          }
+        ],
         "analogIn": [],
         "analogOut": [],
-        "fieldbus": []
+        "fieldbus": [
+          {
+            "address": "",
+            "name": "",
+            "description": "",
+            "device": ""
+          }
+        ],
+        "universalIn": [
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "1",
+            "rack": "1",
+            "slot": "1",
+            "start": "1"
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          }
+        ],
+        "universalOut": [
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "89",
+            "rack": "8",
+            "slot": "8",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          }
+        ]
       },
       "ethernet": {
         "ports": []
@@ -21,15 +286,305 @@
         "items": []
       },
       "details": {
-        "controller": "rtg",
-        "notes": "dg"
+        "controller": "",
+        "notes": ""
       },
-      "name": "we",
-      "manufacturer": "wr",
-      "model": "eg"
+      "name": "ww",
+      "manufacturer": "",
+      "model": ""
+    },
+    {
+      "id": "2f0a6cc3-1e70-425f-8143-f2931f64e268",
+      "calibration": {
+        "masterCounts": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      "io": {
+        "digitalIn": [
+          {
+            "range": "908",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "08",
+            "slot": "987",
+            "start": "98"
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          }
+        ],
+        "digitalOut": [
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          }
+        ],
+        "universalIn": [
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          }
+        ],
+        "universalOut": [
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          },
+          {
+            "range": "",
+            "rack": "",
+            "slot": "",
+            "start": ""
+          }
+        ]
+      },
+      "ethernet": {
+        "ports": [],
+        "robotIP": "yu8i7i8",
+        "controller": "",
+        "subnet": "",
+        "gateway": "",
+        "dns": "",
+        "mac": "",
+        "notes": ""
+      },
+      "overhang": {
+        "old": [],
+        "new": []
+      },
+      "panel": {
+        "items": []
+      },
+      "details": {
+        "controller": "bd",
+        "notes": "bd"
+      },
+      "name": "ghy",
+      "manufacturer": "fbb",
+      "model": "ddb"
     }
   ],
-  "selectedRobot": "adfceb8e-a877-43f1-966d-d1db66c62984",
+  "selectedRobot": "2f0a6cc3-1e70-425f-8143-f2931f64e268",
   "settings": {},
   "overhang": {
     "old": [],
