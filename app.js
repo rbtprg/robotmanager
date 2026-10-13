@@ -21,7 +21,12 @@ function toast(msg){let x=document.createElement('div');x.textContent=msg;x.styl
 function robot(){return db.robots.find(r=>r.id===db.selectedRobot)||db.robots[0]}
 function ensureData(r){
  r.calibration ||= {base:'',tcp:'',frame:'',payload:'',mastering:'',zero:'',notes:''};
- r.io ||= {digitalIn:[],digitalOut:[],analogIn:[],analogOut:[],fieldbus:[],notes:''};
+ r.io ||= {digitalIn:[],digitalOut:[],universalIn:[],universalOut:[],notes:''};
+ // Ensure the four supported I/O tables use the required five-column format.
+ for (const key of ['digitalIn','digitalOut','universalIn','universalOut']) {
+   const old = Array.isArray(r.io[key]) ? r.io[key] : [];
+   r.io[key] = Array.from({length:10}, (_,i) => { const x=old[i]||{}; return {range:x.range??x.address??'',rack:x.rack??'',slot:x.slot??'',start:x.start??''}; });
+ }
  r.ethernet ||= {robotIP:'',controller:'',subnet:'',gateway:'',dns:'',mac:'',ports:[],notes:''};
  r.overhang ||= {old:[],new:[]};
  r.panel ||= {items:[]};
@@ -48,7 +53,7 @@ function dashboard(){
  app.innerHTML=`<div class="grid">
  <div class="card"><span class="muted">TOTAL ROBOTS</span><div class="stat">${db.robots.length}</div></div>
  <div class="card"><span class="muted">SELECTED ROBOT</span><div class="stat">${r?'1':'0'}</div></div>
- <div class="card"><span class="muted">I/O ENTRIES</span><div class="stat">${r?(r.io.digitalIn.length+r.io.digitalOut.length+r.io.analogIn.length+r.io.analogOut.length):0}</div></div>
+ <div class="card"><span class="muted">I/O ENTRIES</span><div class="stat">${r?['digitalIn','digitalOut','universalIn','universalOut'].reduce((n,k)=>n+(r.io[k]||[]).filter(x=>x.range||x.rack||x.slot||x.start).length,0):0}</div></div>
  <div class="card"><span class="muted">OVERHANG RECORDS</span><div class="stat">${r?(r.overhang.old.length+r.overhang.new.length):0}</div></div></div>
  <div class="grid-2" style="margin-top:16px">
  <div class="card"><div class="section-title"><h2>Robot Programmer Database</h2><button class="btn primary" onclick="openRobotModal()">+ Add Robot</button></div>
@@ -78,7 +83,7 @@ function openRobotModal(id=null){
  $('#modal').classList.remove('hidden');
 }
 function saveRobot(id){
- let r=id?db.robots.find(x=>x.id===id):{id:crypto.randomUUID(),calibration:{},io:{digitalIn:[],digitalOut:[],analogIn:[],analogOut:[],fieldbus:[]},ethernet:{ports:[]},overhang:{old:[],new:[]},panel:{items:[]},details:{}};
+ let r=id?db.robots.find(x=>x.id===id):{id:crypto.randomUUID(),calibration:{},io:{digitalIn:[],digitalOut:[],universalIn:[],universalOut:[]},ethernet:{ports:[]},overhang:{old:[],new:[]},panel:{items:[]},details:{}};
  r.name=$('#m_name').value.trim()||'Unnamed Robot';r.manufacturer=$('#m_man').value;r.model=$('#m_model').value;r.details.controller=$('#m_controller').value;r.details.notes=$('#m_notes').value;
  ensureData(r);if(!id)db.robots.push(r);db.selectedRobot=r.id;closeModal();save();nav('dashboard');
 }
@@ -119,18 +124,34 @@ function saveCalibrationValues(){
 
 function io(){
  const r=robot();if(!r)return needRobot();ensureData(r);
- const types=[['digitalIn','DIGITAL INPUT'],['digitalOut','DIGITAL OUTPUT'],['analogIn','ANALOG INPUT'],['analogOut','ANALOG OUTPUT'],['fieldbus','FIELDBUS / ETHERCAT']];
- app.innerHTML=`<div class="card"><div class="section-title"><h2>I/O Configuration</h2></div><div class="tabs">${types.map((x,i)=>`<button class="tab ${i===0?'active':''}" onclick="ioTab('${x[0]}',this)">${x[1]}</button>`).join('')}</div><div id="ioTable"></div></div>`;ioTab('digitalIn',document.querySelector('.tab'));
+ const types=[['digitalIn','DIGITAL INPUT'],['digitalOut','DIGITAL OUTPUT'],['universalIn','UNIVERSAL INPUT'],['universalOut','UNIVERSAL OUTPUT']];
+ app.innerHTML=`<div class="card"><div class="section-title"><div><h2>I/O Configuration</h2><p class="muted">Enter values for the selected robot. Each section has 10 rows; SR.NO is automatic.</p></div><button class="btn primary" onclick="saveIOTable()">SAVE I/O DATA</button></div><div class="tabs">${types.map((x,i)=>`<button class="tab ${i===0?'active':''}" data-iotype="${x[0]}" onclick="ioTab('${x[0]}',this)">${x[1]}</button>`).join('')}</div><div id="ioTable"></div></div>`;
+ ioTab('digitalIn',document.querySelector('.tab'));
 }
 function ioTab(type,btn){
+ // Preserve edits when the user switches between I/O sections without pressing Save first.
+ persistVisibleIOTable();
  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
- const r=robot();const arr=r.io[type]||[];
- $('#ioTable').innerHTML=`<div class="section-title"><span class="muted">${arr.length} entries</span><button class="btn primary" onclick="addIO('${type}')">+ Add I/O</button></div><div class="table-wrap"><table class="data-table"><tr><th>Sr.No</th><th>Address</th><th>Name</th><th>Description</th><th>Device</th><th>Action</th></tr>${arr.map((x,i)=>`<tr><td>${i+1}</td><td class="mono">${x.address||''}</td><td>${x.name||''}</td><td>${x.description||''}</td><td>${x.device||''}</td><td><button class="btn danger" onclick="removeIO('${type}',${i})">Delete</button></td></tr>`).join('')}</table></div>`;
+ const r=robot();if(!r)return;ensureData(r);const arr=r.io[type]||[];
+ const labels=[['range','RANGE'],['rack','RACK'],['slot','SLOT'],['start','START']];
+ $('#ioTable').innerHTML=`<div class="section-title"><span class="muted">10 rows · Enter values in the fields below</span><button class="btn secondary" onclick="saveIOTable()">Save This Section</button></div><div class="table-wrap"><table class="data-table"><tr><th>SR.NO</th><th>RANGE</th><th>RACK</th><th>SLOT</th><th>START</th></tr>${Array.from({length:10},(_,i)=>`<tr><td>${i+1}</td>${labels.map(([k])=>`<td><input class="io-cell-input" data-iotype="${type}" data-row="${i}" data-field="${k}" value="${String(arr[i]?.[k]??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" aria-label="${k} row ${i+1}"></td>`).join('')}</tr>`).join('')}</table></div>`;
 }
-function addIO(type){
- const r=robot();r.io[type].push({address:'',name:'',description:'',device:''});save();io();
+function persistVisibleIOTable(){
+ const r=robot();if(!r)return;ensureData(r);
+ const visibleType=document.querySelector('#ioTable .io-cell-input')?.dataset.iotype;
+ if(!visibleType)return;
+ const rows=Array.from({length:10},(_,i)=>({range:'',rack:'',slot:'',start:''}));
+ document.querySelectorAll('#ioTable .io-cell-input').forEach(el=>{rows[Number(el.dataset.row)][el.dataset.field]=el.value.trim()});
+ r.io[visibleType]=rows;
 }
-function removeIO(type,i){robot().io[type].splice(i,1);save();io()}
+function saveIOTable(){
+ const r=robot();if(!r)return;ensureData(r);
+ const visibleType=document.querySelector('#ioTable .io-cell-input')?.dataset.iotype;
+ if(!visibleType)return;
+ persistVisibleIOTable();save();
+ // Keep the current I/O section open after saving.
+ const btn=document.querySelector(`.tab[data-iotype="${visibleType}"]`);if(btn)ioTab(visibleType,btn);
+}
 function ethernet(){
  const r=robot();if(!r)return needRobot();const e=r.ethernet;
  app.innerHTML=`<div class="card"><div class="section-title"><h2>Ethernet / Network Configuration</h2><button class="btn primary" onclick="saveModule('ethernet')">Save</button></div>
