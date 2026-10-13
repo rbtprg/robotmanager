@@ -1,6 +1,35 @@
 {
-  "robots": [],
-  "selectedRobot": null,
+  "robots": [
+    {
+      "id": "adfceb8e-a877-43f1-966d-d1db66c62984",
+      "calibration": {},
+      "io": {
+        "digitalIn": [],
+        "digitalOut": [],
+        "analogIn": [],
+        "analogOut": [],
+        "fieldbus": []
+      },
+      "ethernet": {
+        "ports": []
+      },
+      "overhang": {
+        "old": [],
+        "new": []
+      },
+      "panel": {
+        "items": []
+      },
+      "details": {
+        "controller": "rtg",
+        "notes": "dg"
+      },
+      "name": "we",
+      "manufacturer": "wr",
+      "model": "eg"
+    }
+  ],
+  "selectedRobot": "adfceb8e-a877-43f1-966d-d1db66c62984",
   "settings": {},
   "overhang": {
     "old": [],
