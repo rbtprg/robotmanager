@@ -42,3 +42,20 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}
 .gauge-box{padding:12px;border:1px solid var(--border,#d1d5db);border-radius:8px;background:var(--card-bg,#fff)}
 #gauge{margin-top:7px;font-family:monospace;word-break:break-word}
 @media(max-width:700px){.three-cols{grid-template-columns:1fr}.sub-tab{font-size:.78rem;padding:9px 5px}.generated-panel{height:140px}.panel-type-label{font-size:11px}}
+
+
+/* User-entered values are displayed in uppercase and bold. */
+input, textarea, select { font-weight: 700; }
+input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]), textarea { text-transform: uppercase; }
+/* I/O table: four compact columns that fit mobile screens without horizontal scrolling. */
+.io-table-wrap { width:100%; max-width:100%; overflow-x:hidden; }
+.io-data-table { width:100%; min-width:0 !important; table-layout:fixed; }
+.io-data-table th, .io-data-table td { padding:7px 5px; font-size:12px; overflow:hidden; }
+.io-data-table th:first-child, .io-data-table td:first-child { width:16%; text-align:center; }
+.io-data-table th:not(:first-child), .io-data-table td:not(:first-child) { width:28%; }
+.io-data-table .io-cell-input { display:block; width:100%; min-width:0; max-width:100%; box-sizing:border-box; padding:7px 4px; border:1px solid #d1d5db; border-radius:5px; font-size:12px; font-weight:700; text-transform:uppercase; }
+@media(max-width:500px) {
+ .io-data-table th, .io-data-table td { padding:5px 3px; font-size:10px; }
+ .io-data-table .io-cell-input { padding:7px 2px; font-size:11px; }
+ .io-table-wrap { overflow-x:hidden; }
+}

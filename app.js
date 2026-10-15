@@ -46,7 +46,7 @@ function render(){
  const titles={dashboard:'Dashboard',robots:'Robots',calibration:'Calibration',io:'I/O Configuration',ethernet:'Ethernet Configuration',overhang:'Overhang Generator',panel:'Panel Diagram',details:'Other Details',backup:'Backup / Restore'};
  $('#pageTitle').textContent=titles[page]||'Dashboard';
  $('#currentRobotLabel').innerHTML=`<label class="top-robot-label">ROBOT <select onchange="changeGlobalRobot(this.value)">${db.robots.length?db.robots.map(r=>`<option value="${r.id}" ${r.id===db.selectedRobot?'selected':''}>${r.name}${r.model?' • '+r.model:''}</option>`).join(''):'<option>No Robot</option>'}</select></label>`;
- ({dashboard,robots,calibration,io,ethernet,overhang,panel,details,backup}[page]||dashboard)();
+ ({dashboard,robots,calibration,io,ethernet,overhang,panel,details,files,backup}[page]||dashboard)();
 }
 function dashboard(){
  const r=robot();
@@ -133,14 +133,14 @@ function ioTab(type,btn){
  persistVisibleIOTable();
  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
  const r=robot();if(!r)return;ensureData(r);const arr=r.io[type]||[];
- const labels=[['range','RANGE'],['rack','RACK'],['slot','SLOT'],['start','START']];
- $('#ioTable').innerHTML=`<div class="section-title"><span class="muted">10 rows · Enter values in the fields below</span><button class="btn secondary" onclick="saveIOTable()">Save This Section</button></div><div class="table-wrap"><table class="data-table"><tr><th>SR.NO</th><th>RANGE</th><th>RACK</th><th>SLOT</th><th>START</th></tr>${Array.from({length:10},(_,i)=>`<tr><td>${i+1}</td>${labels.map(([k])=>`<td><input class="io-cell-input" data-iotype="${type}" data-row="${i}" data-field="${k}" value="${String(arr[i]?.[k]??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" aria-label="${k} row ${i+1}"></td>`).join('')}</tr>`).join('')}</table></div>`;
+ const labels=[['range','RANGE'],['rack','RACK'],['slot','SLOT']];
+ $('#ioTable').innerHTML=`<div class="section-title"><span class="muted">10 rows · Enter values in the fields below</span><button class="btn secondary" onclick="saveIOTable()">Save This Section</button></div><div class="table-wrap io-table-wrap"><table class="data-table io-data-table"><thead><tr><th>SR.NO</th><th>RANGE</th><th>RACK</th><th>SLOT</th></tr></thead><tbody>${Array.from({length:10},(_,i)=>`<tr><td>${i+1}</td>${labels.map(([k])=>`<td><input class="io-cell-input" data-iotype="${type}" data-row="${i}" data-field="${k}" value="${String(arr[i]?.[k]??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" aria-label="${k} row ${i+1}"></td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
 function persistVisibleIOTable(){
  const r=robot();if(!r)return;ensureData(r);
  const visibleType=document.querySelector('#ioTable .io-cell-input')?.dataset.iotype;
  if(!visibleType)return;
- const rows=Array.from({length:10},(_,i)=>({range:'',rack:'',slot:'',start:''}));
+ const rows=Array.from({length:10},(_,i)=>({range:'',rack:'',slot:''}));
  document.querySelectorAll('#ioTable .io-cell-input').forEach(el=>{rows[Number(el.dataset.row)][el.dataset.field]=el.value.trim()});
  r.io[visibleType]=rows;
 }
@@ -315,6 +315,35 @@ function details(){
  const r=robot();if(!r)return needRobot();const d=r.details;
  app.innerHTML=`<div class="card"><div class="section-title"><h2>Other Robot / Cell Details</h2><button class="btn primary" onclick="saveModule('details')">Save</button></div><div class="form-grid">${[['manufacturer','Manufacturer'],['model','Robot Model'],['controller','Controller'],['software','Robot Software Version'],['welding','Welding Machine / Process'],['cell','Robot Cell / Line'],['programPath','Program Backup Path'],['backupPath','Full Backup Location']].map(([k,l])=>`<div class="form-group"><label>${l}</label><input data-field="${k}" data-module="details" value="${d[k]||''}"></div>`).join('')}<div class="form-group full"><label>Other Details / Notes</label><textarea data-field="notes" data-module="details">${d.notes||''}</textarea></div></div></div>`;
 }
+const FILE_DB_NAME='robotProgrammerLocalFiles';
+const FILE_STORE='robotFiles';
+function openRobotFilesDB(){
+ return new Promise((resolve,reject)=>{
+  if(!('indexedDB' in window)){reject(new Error('This browser does not support local file storage.'));return;}
+  const req=indexedDB.open(FILE_DB_NAME,1);
+  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains(FILE_STORE)){const st=d.createObjectStore(FILE_STORE,{keyPath:'id',autoIncrement:true});st.createIndex('addedAt','addedAt');}};
+  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('Could not open local file storage.'));
+ });
+}
+async function listRobotFiles(){const d=await openRobotFilesDB();return new Promise((resolve,reject)=>{const tx=d.transaction(FILE_STORE,'readonly');const req=tx.objectStore(FILE_STORE).getAll();req.onsuccess=()=>resolve(req.result.sort((a,b)=>b.addedAt-a.addedAt));req.onerror=()=>reject(req.error);});}
+async function addRobotFiles(){
+ const picker=$('#robotFilesInput');if(!picker.files.length){alert('Select one or more files first.');return;}
+ try{const d=await openRobotFilesDB();for(const f of picker.files){const bytes=await f.arrayBuffer();const storedBlob=new Blob([bytes],{type:f.type||'application/octet-stream'});const record={name:f.name,type:f.type||'application/octet-stream',size:bytes.byteLength,addedAt:Date.now(),blob:storedBlob};await new Promise((resolve,reject)=>{const tx=d.transaction(FILE_STORE,'readwrite');tx.objectStore(FILE_STORE).add(record);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}picker.value='';await renderRobotFiles();toast('Files saved locally in this browser');}
+ catch(e){alert('Could not save files locally: '+e.message);}
+}
+async function downloadRobotFile(id){try{const d=await openRobotFilesDB();const f=await new Promise((resolve,reject)=>{const req=d.transaction(FILE_STORE,'readonly').objectStore(FILE_STORE).get(Number(id));req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});if(!f)throw new Error('Stored file was not found.');let blob=f.blob;if(blob instanceof ArrayBuffer)blob=new Blob([blob],{type:f.type||'application/octet-stream'});else if(blob&&!(blob instanceof Blob)&&blob.buffer)blob=new Blob([blob.buffer],{type:f.type||'application/octet-stream'});if(!(blob instanceof Blob)||blob.size===0){alert('This saved entry contains 0 bytes. Please delete it, select the original file again, and click Save Selected Files Locally.');return;}const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=f.name||'robot-file';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);}catch(e){alert('Could not download file: '+e.message);}}
+async function deleteRobotFile(id){if(!confirm('Delete this stored file?'))return;try{const d=await openRobotFilesDB();await new Promise((resolve,reject)=>{const tx=d.transaction(FILE_STORE,'readwrite');tx.objectStore(FILE_STORE).delete(Number(id));tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});await renderRobotFiles();}catch(e){alert('Could not delete file: '+e.message);}}
+async function renderRobotFiles(){
+ let files=[];try{files=await listRobotFiles();}catch(e){app.innerHTML=`<div class="card"><h2>Files</h2><p>Local file storage is unavailable in this browser. Try the latest Chrome or Edge.</p></div>`;return;}
+ const fmt=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(2)+' MB';
+ app.innerHTML=`<div class="card"><div class="section-title"><h2>Robot Files Library</h2></div><p class="muted">Store important robot files such as TP/LS programs, backups, manuals, calibration documents, wiring diagrams and PDFs. Files are saved locally in this browser on this device, not uploaded to GitHub or a cloud service.</p><div class="form-group"><label>Select files to store</label><input id="robotFilesInput" type="file" multiple></div><div class="actions" style="margin-top:12px"><button class="btn primary" onclick="addRobotFiles()">Save Selected Files Locally</button><button class="btn secondary" onclick="exportAllRobotFiles()">Export All Files</button></div></div><div class="card" style="margin-top:16px"><div class="section-title"><h2>Stored Files (${files.length})</h2></div>${files.length?`<div class="table-wrap"><table class="data-table" style="min-width:0;width:100%"><thead><tr><th>File Name</th><th>Size</th><th>Added</th><th>Actions</th></tr></thead><tbody>${files.map(f=>`<tr><td style="overflow-wrap:anywhere;font-weight:700">${escapeFileText(f.name)}</td><td>${fmt(f.size)}</td><td>${new Date(f.addedAt).toLocaleDateString()}</td><td><div class="actions"><button class="btn secondary" onclick="downloadRobotFile(${f.id})">Download</button><button class="btn danger" onclick="deleteRobotFile(${f.id})">Delete</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">No files stored yet. Choose files above and click Save Selected Files Locally.</div>`}<p class="muted" style="margin-top:12px">For use on another PC, click Export All Files, then import the exported archive using the same Files menu. Files are separate from robots.json.</p><div class="form-group" style="margin-top:10px"><label>Import file archive (JSON)</label><input id="robotFilesImport" type="file" accept=".json,application/json"></div><button class="btn secondary" style="margin-top:10px" onclick="importAllRobotFiles()">Import Files Archive</button></div>`;
+}
+function escapeFileText(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function files(){await renderRobotFiles();}
+async function exportAllRobotFiles(){try{const files=await listRobotFiles();const records=[];for(const f of files){const dataUrl=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(f.blob);});records.push({name:f.name,type:f.type,size:f.size,addedAt:f.addedAt,dataUrl});}const blob=new Blob([JSON.stringify({format:'robot-programmer-files-v1',files:records},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ROBOT_PROGRAMMER_FILES_ARCHIVE.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);}catch(e){alert('Could not export files: '+e.message);}}
+async function importAllRobotFiles(){const input=$('#robotFilesImport');const f=input.files[0];if(!f){alert('Select a files archive JSON first.');return;}try{const data=JSON.parse(await f.text());if(data.format!=='robot-programmer-files-v1'||!Array.isArray(data.files))throw new Error('This is not a valid Robot Programmer Files archive.');const d=await openRobotFilesDB();for(const item of data.files){const response=await fetch(item.dataUrl);const rawBlob=await response.blob();const blob=new Blob([await rawBlob.arrayBuffer()],{type:item.type||rawBlob.type||'application/octet-stream'});if((item.size||0)>0&&blob.size===0)throw new Error('Imported file data is empty: '+item.name);await new Promise((resolve,reject)=>{const tx=d.transaction(FILE_STORE,'readwrite');tx.objectStore(FILE_STORE).add({name:item.name,type:item.type,size:blob.size,addedAt:item.addedAt||Date.now(),blob});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}await renderRobotFiles();toast('Files archive imported');}catch(e){alert('Import failed: '+e.message);}}
+window.addRobotFiles=addRobotFiles;window.downloadRobotFile=downloadRobotFile;window.deleteRobotFile=deleteRobotFile;window.exportAllRobotFiles=exportAllRobotFiles;window.importAllRobotFiles=importAllRobotFiles;
+
 function backup(){
  app.innerHTML=`<div class="grid-2"><div class="card"><h2>Local Data File</h2><p class="muted">On Chrome or Edge desktop, create or select a JSON file on your PC. After you connect it, the app will write saved robot data into that file when you press Save.</p><button class="btn primary" onclick="connectLocalFile()">Create / Connect Data File</button><p id="fileStatus" class="muted" style="margin-top:10px">${localDbFileHandle?'Local file connected for this session.':'No file connected. Data is still saved in this browser.'}</p><p class="muted">Keep this JSON file as your local database and use Import on another browser/device when needed.</p></div><div class="card"><h2>Export Database</h2><p class="muted">Download all robot records as a JSON backup.</p><button class="btn primary" onclick="exportDB()">Download Backup</button></div><div class="card"><h2>Import Database</h2><p class="muted">Load a previously saved JSON file into the app.</p><input type="file" accept=".json,application/json" id="importFile"><button class="btn success" style="margin-top:10px" onclick="importDB()">Restore Backup</button></div><div class="card"><h2>How local saving works</h2><p class="muted"><b>To carry robots with your GitHub project:</b> click Download Project Database, replace the project's <code>robots.json</code> with the downloaded file, then commit/push that file to GitHub. A fresh browser loads robots.json automatically. GitHub Pages cannot write changes into the repository by itself.</p></div></div>`;
 }
@@ -340,6 +369,15 @@ function needRobot(){app.innerHTML=`<div class="card"><div class="empty">Please 
 function closeModal(){$('#modal').classList.add('hidden')}
 $('#modalClose').onclick=closeModal;
 $('#modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
+// Automatically capitalize all user-entered text while typing. Numeric input is unchanged; all fields remain bold via CSS.
+document.addEventListener('input', event => {
+ const el=event.target;
+ if(el && (el.matches('input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]), textarea'))) {
+   const start=el.selectionStart, end=el.selectionEnd;
+   const upper=el.value.toLocaleUpperCase();
+   if(el.value!==upper) { el.value=upper; try { el.setSelectionRange(start,end); } catch(_) {} }
+ }
+});
 window.addEventListener('hashchange',render);
 async function bootProjectDatabase(){
  if(!hasLocalData){
